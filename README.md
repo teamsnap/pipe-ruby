@@ -8,7 +8,7 @@ instance methods, `pipe` and `pipe_each`.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pipe-ruby'
+gem "pipe-ruby", :require => "pipe"
 ```
 
 After bundling, include the `Pipe` module in your class(es)
