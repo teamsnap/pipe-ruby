@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'pipe/ruby/version'
+require 'pipe/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "pipe-ruby"
-  spec.version       = Pipe::Ruby::VERSION
+  spec.version       = Pipe::VERSION
   spec.authors       = ["Dan Matthews"]
   spec.email         = ["oss@teamsnap.com"]
   spec.summary       = %q{Ruby implementation of the UNIX pipe}

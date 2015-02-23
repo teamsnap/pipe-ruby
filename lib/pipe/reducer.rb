@@ -52,7 +52,7 @@ module Pipe
       data = { method: method, subject: subject }
 
       begin
-        config.error_handlers.each { |handler| handler.call(e, data) }
+        config.error_handlers.each { |handler| handler.call(error, data) }
       rescue => e
         Error.process(
           :data => data,
