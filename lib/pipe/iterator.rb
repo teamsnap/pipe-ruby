@@ -31,7 +31,7 @@ module Pipe
       if config.raise_on_error?
         Error.process(
           :data => { :subject => subject },
-          :error => e,
+          :error => error,
           :namespace => IterationError,
         )
       end
