@@ -151,26 +151,35 @@ stopped.
 
 ## Skipping / Stopping Execution
 
-Prior to the execution of each method in the `through` array,
-`Pipe::Config#break?` is called with the current value of `subject`. If it
-returns truthy, execution will be stopped and the current value of subject
-will be returned. A falsey response will allow the execution to move forward.
+At the beginning of each iteration, `Pipe::Config#stop_on` is called. If it
+returns truthy, execution will be stopped and the current value of subject will
+be returned. A falsey response will allow the execution to move forward.
 
-If the break test allows us to move forward, `Pipe::Config#skip?` will be called
-with the current value of `subject`. Truthy responses from this method will
-cause the existing value of subject to be carried to the next method without
-executing the current specified method. Falsey responses will allow normal
-execution of the currently specified method.
+If not stopped, `Pipe::Config#skip_on` will be called. Truthy responses will
+cause the current value of subject to be passed to the next iteration without
+calling the method specified in the current iteration. Falsey responses will
+allow the specified method to be called.
 
-## Testing
-
-I'll be adding tests in in the very near future. In the meantime, use at your
-own risk :)
+Both skip_on and stop_on will receive three arguments when they're called, the
+current value of subject, the method to be called on this iteration and the
+value of `#through`.
 
 ## Contributing
 
+First: please check out our [style guides](https://github.com/teamsnap/guides/tree/master/ruby)...
+we will hold you to them :)
+
 1. Fork it ( https://github.com/[my-github-username]/pipe-ruby/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+3. Make sure you're green (`bundle exec rspec`)
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request
+
+## Testing
+
+`bundle exec rspec`
+
+We like to have good coverage of each major feature. Before contributing with a
+PR, please make sure you've added tests and are fully green.
+

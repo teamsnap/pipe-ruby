@@ -19,28 +19,30 @@ module Pipe
       error_handlers << block if block_given?
     end
 
-    def break?(subj)
-      stop_on.call(subj)
-    rescue ArgumentError
-      stop_on.call
+    def break?(*args)
+      stop_on.call(*args) ? true : false
     end
 
     def raise_on_error?
       raise_on_error ? true : false
     end
 
-    def skip?(subj)
-      skip_on.call(subj)
-    rescue ArgumentError
-      skip_on.call
+    def skip?(*args)
+      skip_on.call(*args) ? true : false
     end
 
     def skip_on=(val)
-      @skip_on = (val.respond_to?(:call) ? val : lambda { |obj| val })
+      @skip_on = as_proc(val)
     end
 
     def stop_on=(val)
-      @stop_on = (val.respond_to?(:call) ? val : lambda { |obj| val })
+      @stop_on = as_proc(val)
+    end
+
+    private
+
+    def as_proc(val)
+      val.respond_to?(:call) ? val : proc { val }
     end
   end
 end

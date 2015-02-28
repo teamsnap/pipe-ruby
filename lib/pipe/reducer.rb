@@ -10,7 +10,7 @@ module Pipe
     def reduce
       through.reduce(subject) { |subj, method|
         begin
-          break subj if config.break?(subj)
+          break subj if config.break?(subj, method, through)
 
           process(subj, method)
         rescue => e
@@ -41,7 +41,7 @@ module Pipe
     end
 
     def process(subj, method)
-      if config.skip?(subj)
+      if config.skip?(subj, method, through)
         subj
       else
         context.send(method, subj)
