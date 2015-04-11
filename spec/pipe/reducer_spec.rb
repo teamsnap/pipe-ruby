@@ -119,10 +119,10 @@ describe Pipe::Reducer do
       context = Class.new do
         ExpectedError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise ExpectedError, "BOOM!"
         end
-      end
+      end.new
 
       expect(handler1).to receive(:call)
       expect(handler2).to receive(:call)
@@ -142,10 +142,10 @@ describe Pipe::Reducer do
       context = Class.new do
         AnotherExpectedError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise AnotherExpectedError, "BOOM!"
         end
-      end
+      end.new
 
       expect{
         Pipe::Reducer.new(
@@ -162,10 +162,10 @@ describe Pipe::Reducer do
       context = Class.new do
         AndAnotherExpectedError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise AndAnotherExpectedError, "BOOM!"
         end
-      end
+      end.new
       subject = Object.new
 
       expect(
@@ -180,18 +180,20 @@ describe Pipe::Reducer do
 
     it "honors Config#return_on_error callable objects" do
       subject = Object.new
-      expected = [subject, :hello]
       config = Pipe::Config.new(
         :raise_on_error => false,
-        :return_on_error => proc { |subj| [subj, :hello] }
+        :return_on_error => proc { |subj, method, e|
+          [subj, method, e.class, e.to_s, :hello]
+        }
       )
       context = Class.new do
         YetAnotherExpectedError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise YetAnotherExpectedError, "BOOM!"
         end
-      end
+      end.new
+      expected = [subject, :bomb, YetAnotherExpectedError, "BOOM!", :hello]
 
       expect(
         Pipe::Reducer.new(
@@ -211,10 +213,10 @@ describe Pipe::Reducer do
       context = Class.new do
         OneMoreError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise OneMoreError, "BOOM!"
         end
-      end
+      end.new
 
       expect(
         Pipe::Reducer.new(
