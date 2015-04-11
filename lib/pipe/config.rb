@@ -1,16 +1,18 @@
 module Pipe
   class Config
     attr_accessor :raise_on_error
-    attr_reader :error_handlers, :skip_on, :stop_on
+    attr_reader :error_handlers, :return_on_error, :skip_on, :stop_on
 
     def initialize(
       error_handlers: [],
       raise_on_error: true,
+      return_on_error: :subject,
       skip_on: false,
       stop_on: false
     )
       @error_handlers = error_handlers
       @raise_on_error = raise_on_error
+      @return_on_error = return_on_error
       self.skip_on = skip_on
       self.stop_on = stop_on
     end

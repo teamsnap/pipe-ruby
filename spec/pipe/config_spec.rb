@@ -10,6 +10,10 @@ describe Pipe::Config do
       expect(Pipe::Config.new.raise_on_error).to eq(true)
     end
 
+    it "sets return_on_error to :subject" do
+      expect(Pipe::Config.new.return_on_error).to eq(:subject)
+    end
+
     it "sets skip_on to a proc which returns false" do
       expect(Pipe::Config.new.skip_on.call).to eq(false)
     end

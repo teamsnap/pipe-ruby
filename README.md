@@ -55,12 +55,17 @@ configurable options. Here they are with their defaults:
 
 ```ruby
 Pipe::Config.new(
-  :error_handlers => [],   # an array of procs to be called when an error occurs
-  :raise_on_error => true, # tells Pipe to re-raise errors which occur
-  :skip_on => false,       # a truthy value or proc which tells pipe to skip the
-                           # next method in the `through` array
-  :stop_on => false        # a truthy value or proc which tells pipe to stop
-                           # processing and return the current value
+  :error_handlers => [],        # an array of procs to be called when an error
+                                # occurs
+  :raise_on_error => true,      # tells Pipe to re-raise errors which occur
+  :return_on_error => :subject, # when an error happens and raise error is false
+                                # returns the current value of subject defaultly;
+                                # if callable, will return the result of the call
+                                # if not callable, will return the value
+  :skip_on => false,            # a truthy value or proc which tells pipe to skip
+                                # the next method in the `through` array
+  :stop_on => false             # a truthy value or proc which tells pipe to stop
+                                # processing and return the current value
 )
 ```
 
