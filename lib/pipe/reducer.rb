@@ -14,8 +14,9 @@ module Pipe
 
           process(subj, method)
         rescue => e
-          handle_error(:error => e, :method => method, :subject => subj)
-          break subj
+          payload = {:error => e, :method => method, :subject => subj}
+          handle_error(payload)
+          break error_response(payload)
         end
       }
     end
@@ -23,6 +24,16 @@ module Pipe
     private
 
     attr_accessor :config, :context, :subject, :through
+
+    def error_response(error:, method:, subject:)
+      if config.return_on_error == :subject
+        subject
+      elsif config.return_on_error.respond_to?(:call)
+        config.return_on_error.call(subject, method, error)
+      else
+        config.return_on_error
+      end
+    end
 
     def handle_error(error:, method:, subject:)
       process_error_handlers(

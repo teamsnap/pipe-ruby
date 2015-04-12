@@ -119,10 +119,10 @@ describe Pipe::Reducer do
       context = Class.new do
         ExpectedError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise ExpectedError, "BOOM!"
         end
-      end
+      end.new
 
       expect(handler1).to receive(:call)
       expect(handler2).to receive(:call)
@@ -142,10 +142,10 @@ describe Pipe::Reducer do
       context = Class.new do
         AnotherExpectedError = Class.new(StandardError)
 
-        def bomb
+        def bomb(subject)
           raise AnotherExpectedError, "BOOM!"
         end
-      end
+      end.new
 
       expect{
         Pipe::Reducer.new(
@@ -155,6 +155,77 @@ describe Pipe::Reducer do
           :through => [:bomb]
         ).reduce
       }.to_not raise_error
+    end
+
+    it "honors Config#return_on_error :subject default" do
+      config = Pipe::Config.new(:raise_on_error => false)
+      context = Class.new do
+        AndAnotherExpectedError = Class.new(StandardError)
+
+        def bomb(subject)
+          raise AndAnotherExpectedError, "BOOM!"
+        end
+      end.new
+      subject = Object.new
+
+      expect(
+        Pipe::Reducer.new(
+          :config => config,
+          :context => context,
+          :subject => subject,
+          :through => [:bomb]
+        ).reduce
+      ).to eq(subject)
+    end
+
+    it "honors Config#return_on_error callable objects" do
+      subject = Object.new
+      config = Pipe::Config.new(
+        :raise_on_error => false,
+        :return_on_error => proc { |subj, method, e|
+          [subj, method, e.class, e.to_s, :hello]
+        }
+      )
+      context = Class.new do
+        YetAnotherExpectedError = Class.new(StandardError)
+
+        def bomb(subject)
+          raise YetAnotherExpectedError, "BOOM!"
+        end
+      end.new
+      expected = [subject, :bomb, YetAnotherExpectedError, "BOOM!", :hello]
+
+      expect(
+        Pipe::Reducer.new(
+          :config => config,
+          :context => context,
+          :subject => subject,
+          :through => [:bomb]
+        ).reduce
+      ).to eq(expected)
+    end
+
+    it "returns Config#return_on_error when not callable" do
+      config = Pipe::Config.new(
+        :raise_on_error => false,
+        :return_on_error => :error
+      )
+      context = Class.new do
+        OneMoreError = Class.new(StandardError)
+
+        def bomb(subject)
+          raise OneMoreError, "BOOM!"
+        end
+      end.new
+
+      expect(
+        Pipe::Reducer.new(
+          :config => config,
+          :context => context,
+          :subject => Object.new,
+          :through => [:bomb]
+        ).reduce
+      ).to eq(:error)
     end
   end
 end
