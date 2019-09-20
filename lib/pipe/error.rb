@@ -9,11 +9,17 @@ module Pipe
     end
 
     def initialize(e)
-      @e = e
+      @e =
+        if e.cause.nil?
+          e
+        else
+          e.cause
+        end
     end
 
     def rewrite_as(data: {}, namespace:)
       subclass = find_or_create_subclass(namespace)
+
       raise subclass, "#{e} [#{data}, #{e.class}]", e.backtrace
     end
 
@@ -35,4 +41,3 @@ module Pipe
     end
   end
 end
-

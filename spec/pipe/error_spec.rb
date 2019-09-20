@@ -28,7 +28,6 @@ describe Pipe::Error do
       rescue => e
         @err = e
       end
-
       expect(@err.message).to match(Regexp.new("NoMethodError"))
     end
 
@@ -49,6 +48,23 @@ describe Pipe::Error do
       end
 
       expect(@err.message).to match(Regexp.new("#{data}"))
+    end
+
+    it "raises nested exceptions" do
+      begin
+        begin
+          begin
+            not_a_method(:boom)
+          rescue => e
+            raise StandardError
+          end
+        rescue => e
+          Pipe::Error.process(:error => e, :namespace => Namespace)
+        end
+      rescue => e
+        @err = e
+      end
+      expect(@err.message).to match(Regexp.new("NoMethodError"))
     end
   end
 end
