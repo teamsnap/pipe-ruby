@@ -2,39 +2,12 @@ require "spec_helper"
 
 describe Pipe::Config do
   describe "defaults" do
-    it "sets error handlers to a blank array" do
-      expect(Pipe::Config.new.error_handlers).to eq([])
-    end
-
-    it "sets raise_on_error to true" do
-      expect(Pipe::Config.new.raise_on_error).to eq(true)
-    end
-
-    it "sets return_on_error to :subject" do
-      expect(Pipe::Config.new.return_on_error).to eq(:subject)
-    end
-
     it "sets skip_on to a proc which returns false" do
       expect(Pipe::Config.new.skip_on.call).to eq(false)
     end
 
     it "sets stop_on to a proc which returns false" do
       expect(Pipe::Config.new.stop_on.call).to eq(false)
-    end
-  end
-
-  describe "#error_handler" do
-    context "when passed a block" do
-      it "adds the block to the error_handlers array" do
-        config = Pipe::Config.new
-        block = proc { "error handler" }
-
-        expect{ config.error_handler(&block) }
-          .to change{ config.error_handlers.size }
-          .by(1)
-
-        expect(config.error_handlers.last).to eq(block)
-      end
     end
   end
 
@@ -54,18 +27,6 @@ describe Pipe::Config do
 
       expect(config.stop_on).to receive(:call).with(arg)
       config.break?(arg)
-    end
-  end
-
-  describe "#raise_on_error?" do
-    it "returns a truthy version of raise_on_error" do
-      config = Pipe::Config.new
-      config.raise_on_error = nil
-      expect(config.raise_on_error?).to eq(false)
-      config.raise_on_error = true
-      expect(config.raise_on_error?).to eq(true)
-      config.raise_on_error = "yes"
-      expect(config.raise_on_error?).to eq(true)
     end
   end
 

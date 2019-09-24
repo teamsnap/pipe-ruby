@@ -9,33 +9,18 @@ module Pipe
 
     def iterate
       subjects.map { |subject|
-        begin
-          Reducer.new(
-            config: config,
-            context: context,
-            subject: subject,
-            through: through
-          ).reduce
-        rescue => e
-          handle_error(:error => e, :subject => subject)
-          subject
-        end
+        Reducer.new(
+          config: config,
+          context: context,
+          subject: subject,
+          through: through
+        ).reduce
       }
     end
 
     private
-
     attr_accessor :config, :context, :subjects, :through
 
-    def handle_error(error:, subject:)
-      if config.raise_on_error?
-        Error.process(
-          :data => { :subject => subject },
-          :error => error,
-          :namespace => IterationError,
-        )
-      end
-    end
   end
 end
 
