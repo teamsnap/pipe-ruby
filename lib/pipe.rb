@@ -1,6 +1,5 @@
 require "pipe/ext/string"
 require "pipe/config"
-require "pipe/error"
 require "pipe/iterator"
 require "pipe/reducer"
 

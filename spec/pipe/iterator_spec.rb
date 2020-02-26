@@ -27,60 +27,20 @@ describe Pipe::Iterator do
     end
 
     describe "when an error occurs" do
-      describe "and Config#raise_on_error is set to false" do
-        it "does not raise" do
-          dub = Object.new
-          dub.singleton_class.send(:define_method, :reduce) do
-            raise StandardError, "fail"
-          end
-          iterator = Pipe::Iterator.new(
-            :config => Pipe::Config.new(:raise_on_error => false),
-            :context => Object.new,
-            :subjects => [Object.new],
-            :through => [:to_s]
-          )
-          expect(Pipe::Reducer).to receive(:new).and_return(dub)
-
-          expect{ iterator.iterate }.to_not raise_error
+      it "raises an error" do
+        dub = Object.new
+        dub.singleton_class.send(:define_method, :reduce) do
+          raise StandardError, "fail"
         end
+        iterator = Pipe::Iterator.new(
+          :config => Pipe::Config.new(),
+          :context => Object.new,
+          :subjects => [Object.new],
+          :through => [:to_s]
+        )
+        expect(Pipe::Reducer).to receive(:new).and_return(dub)
 
-        it "returns an array of the original items" do
-          dub = Object.new
-          dub.singleton_class.send(:define_method, :reduce) do
-            raise StandardError, "fail"
-          end
-          subjects = [Object.new, Object.new]
-          iterator = Pipe::Iterator.new(
-            :config => Pipe::Config.new(:raise_on_error => false),
-            :context => Object.new,
-            :subjects => subjects,
-            :through => [:to_s]
-          )
-          expect(Pipe::Reducer)
-            .to receive(:new)
-            .and_return(dub)
-            .exactly(2).times
-
-          expect(iterator.iterate).to eq(subjects)
-        end
-      end
-
-      describe "and Config#raise_on_error is set to true" do
-        it "raises" do
-          dub = Object.new
-          dub.singleton_class.send(:define_method, :reduce) do
-            raise StandardError, "fail"
-          end
-          iterator = Pipe::Iterator.new(
-            :config => Pipe::Config.new(:raise_on_error => true),
-            :context => Object.new,
-            :subjects => [Object.new],
-            :through => [:to_s]
-          )
-          expect(Pipe::Reducer).to receive(:new).and_return(dub)
-
-          expect{ iterator.iterate }.to raise_error
-        end
+        expect{ iterator.iterate }.to raise_error
       end
     end
   end

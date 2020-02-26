@@ -6,8 +6,8 @@ require 'pipe/version'
 Gem::Specification.new do |spec|
   spec.name          = "pipe-ruby"
   spec.version       = Pipe::VERSION
-  spec.authors       = ["Dan Matthews"]
-  spec.email         = ["oss@teamsnap.com"]
+  spec.authors       = ["Dan Matthews, Paul Hanyzewski"]
+  spec.email         = ["devs@teamsnap.com"]
   spec.summary       = %q{Ruby implementation of the UNIX pipe}
   spec.description   = %q{}
   spec.homepage      = ""

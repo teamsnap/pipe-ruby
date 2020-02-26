@@ -55,15 +55,9 @@ configurable options. Here they are with their defaults:
 
 ```ruby
 Pipe::Config.new(
-  :error_handlers => [],        # an array of procs to be called when an error
-                                # occurs
-  :raise_on_error => true,      # tells Pipe to re-raise errors which occur
-  :return_on_error => :subject, # when an error happens and raise error is false
-                                # returns the current value of subject defaultly;
-                                # if callable, will return the result of the call
-                                # if not callable, will return the value
   :skip_on => false,            # a truthy value or proc which tells pipe to skip
                                 # the next method in the `through` array
+
   :stop_on => false             # a truthy value or proc which tells pipe to stop
                                 # processing and return the current value
 )
@@ -82,7 +76,7 @@ class MyClass
   include Pipe
 
   def my_method
-    config = Pipe::Config.new(:raise_on_error => false)
+    config = Pipe::Config.new(:skip_on => false)
     subject = Object.new
 
     pipe(subject, :config => config, :through => [
@@ -101,7 +95,7 @@ class MyClass
   include Pipe
 
   def pipe_config
-    Pipe::Config.new(:raise_on_error => false)
+    Pipe::Config.new(:skip_on => false)
   end
 
   # ...
@@ -115,44 +109,12 @@ class MyClass
   include Pipe
 
   def initialize
-    @pipe_config = Pipe::Config.new(:raise_on_error => false)
+    @pipe_config = Pipe::Config.new(:skip_on => false)
   end
 
   # ...
 end
 ```
-
-## Error Handling
-
-As we implemented different versions of `pipe` across our infrastructure, we
-came across several different error handling needs.
-
-- logging errors that occur in methods called by pipe without raising them
-- catching and re-raising errors with additional information so we can still
-  see the real backtrace while also gaining insight into which subject and
-  method combination triggered the error
-- easily seeing which area of the pipe stack we were in when an error occurred
-
-The first layer of error handling is the `error_handlers` attribute in
-`Pipe::Config`. Each proc in this array will be called with two arguments,
-the actual error object and a context hash containing the method and subject
-when the error occurred. If an error occurs within one of these handlers it
-will be re-raised inside the `Pipe::HandlerError` namespace, meaning a
-`NameError` becomes a `Pipe::HandlerError::NameError`. We also postpend the
-current method, current subject and original error class to the message.
-
-NOTE: `Pipe::Config#error_handler` takes a block and adds it to the existing
-error handlers.
-
-We have two other namespaces, `Pipe::ReducerError`, which is used when an error
-occurs inside during `pipe` execution and `Pipe::IteratorError` for errors which
-occur inside of `pipe_each` execution.
-
-Whenever an error occurs in execution (but not in error handler processing), the
-response of `Pipe::Config#raise_on_error?` is checked. If this method returns
-`true`, the error will be re-raised inside of the appropriate namespace. If it
-returns `false`, the current value of `subject` will be returned and execution
-stopped.
 
 ## Skipping / Stopping Execution
 
