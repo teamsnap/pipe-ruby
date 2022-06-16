@@ -1,5 +1,8 @@
 require "pry"
 require "pipe"
+require "simplecov"
+
+SimpleCov.start
 
 module VerifyAndResetHelpers
   def verify(object)
