@@ -9,13 +9,13 @@ documentation: []
 deployment: []
 languages:
   - name: Ruby
-    version: 2.7.8
+    version: 3.0.6
 frameworks: []
 logging: []
 infrastructure:
   application:
     name: pipe-ruby
     image: ruby
-    imageTag: 2.7-slim
+    imageTag: 3.0-slim
     startcmd: "bundle exec rspec"
     vault-path: dev/applications/data/pipe-ruby/dotenv
