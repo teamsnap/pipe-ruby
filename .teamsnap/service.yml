@@ -1,15 +1,21 @@
 ---
-classification: lib
-production:
-  tier: 
-  url: 
-  hosting_platform: 
-  logging: false
+classification: gem
+production: {}
 performance_monitoring: []
 error_monitoring: []
 continuous_integration: []
 bug_tracking: []
 documentation: []
 deployment: []
-languages: []
+languages:
+  - name: Ruby
+    version: 3.2.2
 frameworks: []
+logging: []
+infrastructure:
+  application:
+    name: pipe-ruby
+    image: ruby
+    imageTag: 3.2-slim
+    startcmd: "bundle exec rspec"
+    vault-path: dev/applications/data/pipe-ruby/dotenv

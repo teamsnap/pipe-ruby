@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  app:
+    image: pipe-ruby:latest
+    container_name: pipe-ruby
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dev.dockerfile
+    env_file: ../../.env.development
+    volumes:
+      - pipe_ruby_bundle:/usr/local/bundle
+      - ../../:/usr/src/app/:cached
+
+networks:
+  default:
+    external:
+      name: dockercoreservices_default
+
+volumes:
+  pipe_ruby_bundle:
+    name: pipe_ruby_bundle
