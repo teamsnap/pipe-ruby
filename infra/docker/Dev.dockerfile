@@ -1,4 +1,4 @@
-FROM ruby:2.6-slim
+FROM ruby:2.7-slim
 
 EXPOSE 4500
 
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /usr/src/app
 
-RUN gem install bundler -v 1.17.3
+RUN gem install bundler
 
 ENTRYPOINT ["infra/docker/scripts/entrypoint.sh"]
 CMD ["bundle", "exec", "rspec"]

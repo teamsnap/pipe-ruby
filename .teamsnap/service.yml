@@ -16,6 +16,6 @@ infrastructure:
   application:
     name: pipe-ruby
     image: ruby
-    imageTag: 3.0-slim
+    imageTag: 2.7-slim
     startcmd: "bundle exec rspec"
     vault-path: dev/applications/data/pipe-ruby/dotenv
