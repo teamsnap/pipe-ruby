@@ -1,4 +1,4 @@
-FROM ruby:3.0-slim
+FROM ruby:3.1-slim
 
 EXPOSE 4500
 
